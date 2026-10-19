@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Admin</title>
+<style>
+:root{--bg:#0A0806;--bg2:#15100c;--gold:#D4A24C;--foam:#F4EEE4;--mute:#A89B8A;--line:rgba(244,238,228,.14);--red:#E2413F}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--foam);font:15px/1.5 system-ui,-apple-system,'Segoe UI',Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{background:linear-gradient(135deg,#F0C878,#D4A24C);color:#1a1208;font-weight:700;border:0;border-radius:999px;padding:9px 18px;cursor:pointer}
+.btn.g{background:none;color:var(--foam);border:1px solid var(--line)}.btn.d{background:none;color:var(--red);border:1px solid rgba(226,65,63,.4)}.btn.s{padding:6px 12px;font-size:13px}
+input,select,textarea{background:#0e0a07;border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+label{display:block;color:var(--mute);font-size:12px;margin:12px 0 5px;letter-spacing:.06em;text-transform:uppercase}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}.tabs button{background:none;border:1px solid transparent;border-radius:999px;padding:7px 16px;cursor:pointer;color:var(--mute)}.tabs button.on{border-color:var(--gold);color:var(--foam)}
+main{max-width:980px;margin:0 auto;padding:22px 16px 80px}h2{font-weight:600;margin-bottom:14px}
+.box{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;border:1px solid var(--line);color:var(--mute)}.pill.new{color:#1a1208;background:var(--gold);border-color:var(--gold)}
+small,.m{color:var(--mute)}.tot{font-weight:700;color:var(--gold)}ul.it{margin:8px 0 8px 18px}
+#login{max-width:340px;margin:18vh auto;padding:0 16px}#err,#msg{margin-top:10px;font-size:14px}#err{color:var(--red)}#msg{color:var(--gold)}
+@media(max-width:640px){.g2{grid-template-columns:1fr}}
+</style></head><body>
+<div id="login" hidden><h2>Admin login</h2><label>Password</label><input id="pw" type="password" autocomplete="current-password"><p style="margin-top:14px"><button class="btn" id="go">Log in</button></p><p id="err"></p></div>
+<div id="app" hidden>
+ <div class="top"><div class="tabs" id="tabs"><button data-t="orders">Orders <span id="nb"></span></button><button data-t="menu">Menu</button><button data-t="reviews">Reviews</button><button data-t="settings">Settings</button></div><button class="btn g s" id="out">Log out</button></div>
+ <main id="main"></main>
+</div>
+<script>
+var $=function(s){return document.querySelector(s)},D=null,tab='orders',edit=null,XF='',XT='';
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function api(m,u,b){return fetch('/api/admin'+u,{method:m,credentials:'same-origin',headers:{'Content-Type':'application/json'},body:b?JSON.stringify(b):undefined}).then(function(r){
+ if(r.status===401&&u!=='/login'){showLogin();throw new Error('login')}
+ return r.json().catch(function(){return{}}).then(function(j){if(!r.ok)throw new Error(j.error||'Something went wrong');return j})})}
+function showLogin(){$('#app').hidden=true;$('#login').hidden=false}
+function load(){return api('GET','/data').then(function(d){D=d;$('#login').hidden=true;$('#app').hidden=false;draw()})}
+function flash(t){var m=$('#msg');if(m){m.textContent=t;setTimeout(function(){m.textContent=''},2500)}}
+function fail(e){if(e.message!=='login')alert(e.message)}
+$('#go').onclick=function(){api('POST','/login',{password:$('#pw').value}).then(load).catch(function(e){$('#err').textContent=e.message})};
+$('#pw').onkeydown=function(e){if(e.key==='Enter')$('#go').click()};
+$('#out').onclick=function(){api('POST','/logout').then(showLogin)};
+$('#tabs').onclick=function(e){var t=e.target.getAttribute('data-t');if(t){tab=t;edit=null;draw()}};
+function draw(){
+ [].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.className=b.getAttribute('data-t')===tab?'on':''});
+ var n=D.orders.filter(function(o){return o.status==='new'}).length;$('#nb').textContent=n?'('+n+')':'';
+ $('#main').innerHTML=({orders:vOrders,menu:vMenu,reviews:vReviews,settings:vSettings})[tab]();
+}
+function money(n){return esc(D.settings.currency)+' '+Number(n).toLocaleString('en-US')}
+/* orders */
+function vOrders(){
+ if(!D.orders.length)return'<h2>Orders</h2><p class="m">No orders yet. New orders appear here automatically.</p>';
+ var ex='<div class="box"><b>Download orders as a spreadsheet</b><p class="m">Opens in Excel or Google Sheets. Leave the dates empty to get all orders.</p><div class="g2"><div><label>From</label><input id="x_from" type="date" value="'+XF+'"></div><div><label>To</label><input id="x_to" type="date" value="'+XT+'"></div></div><p style="margin-top:12px"><a class="btn" id="x_dl" href="/api/admin/orders.csv?from='+XF+'&to='+XT+'">Download spreadsheet</a></p></div>';
+ return'<h2>Orders</h2>'+ex+D.orders.map(function(o){
+  return'<div class="box"><div class="row"><b>#'+o.id+' · '+esc(o.name)+'</b><span><span class="pill">'+(o.type==='delivery'?'delivery':'pickup')+'</span> <span class="pill '+(o.status==='new'?'new':'')+'">'+o.status+'</span></span></div>'+
+  '<small>'+new Date(o.createdAt).toLocaleString()+' · <a style="color:var(--gold)" href="tel:'+esc(o.phone)+'">'+esc(o.phone)+'</a></small>'+
+  '<ul class="it">'+o.items.map(function(i){return'<li>'+i.qty+' × '+esc(i.name)+' <small>'+money(i.price*i.qty)+'</small></li>'}).join('')+'</ul>'+
+  (o.type==='delivery'?'<p class="m">Address: <b style="color:var(--foam)">'+esc(o.address)+'</b></p>':'')+
+  '<p class="m">'+(o.payMethod==='online'?'Online payment, ID: <b style="color:var(--foam)">'+esc(o.payRef)+'</b>':(o.type==='delivery'?'Cash on delivery':'Pay at pickup'))+' &nbsp;<span class="pill '+(o.payStatus==='paid'?'':'new')+'">'+esc(o.payStatus||'unpaid')+'</span></p>'+
+  (o.note?'<p class="m">Note: '+esc(o.note)+'</p>':'')+
+  '<div class="row" style="margin-top:10px"><span class="tot">'+money(o.total)+(o.fee?' <small>(incl. delivery '+money(o.fee)+')</small>':'')+'</span><span><select data-ps="'+o.id+'" style="width:auto">'+['unpaid','awaiting','paid'].map(function(x){return'<option'+(x===(o.payStatus||'unpaid')?' selected':'')+'>'+x+'</option>'}).join('')+'</select> <select data-st="'+o.id+'" style="width:auto">'+['new','preparing','ready','delivering','done','cancelled'].map(function(s){return'<option'+(s===o.status?' selected':'')+'>'+s+'</option>'}).join('')+'</select></span></div></div>'}).join('');
+}
+/* menu */
+function vMenu(){
+ var p=edit&&edit.k==='p'?edit.v:{category:'drink',available:true};
+ var f='<div class="box"><h2>'+(p.id?'Edit item':'Add item')+'</h2><div class="g2"><div><label>Name</label><input id="f_name" value="'+esc(p.name)+'"></div><div><label>Price</label><input id="f_price" type="number" min="0" value="'+esc(p.price)+'"></div>'+
+ '<div><label>Short description</label><input id="f_desc" value="'+esc(p.desc)+'"></div><div><label>Small label (optional)</label><input id="f_tag" value="'+esc(p.tag)+'"></div>'+
+ '<div><label>Section</label><select id="f_cat"><option value="drink"'+(p.category==='drink'?' selected':'')+'>Signature pours</option><option value="product"'+(p.category==='product'?' selected':'')+'>Best sellers (shop)</option></select></div>'+
+ '<div><label>Photo (optional)</label><input id="f_file" type="file" accept="image/*"><small id="f_up" class="m">Choose a photo from your phone or computer. It uploads and resizes by itself.</small><input id="f_img" placeholder="Or paste an image link" value="'+esc(p.image)+'" style="margin-top:8px"><img id="f_prev" alt="" style="display:'+(p.image?'block':'none')+';margin-top:10px;max-width:160px;border-radius:12px;border:1px solid var(--line)" src="'+esc(p.image)+'"></div></div>'+
+ '<label><input id="f_av" type="checkbox" style="width:auto" '+(p.available!==false?'checked':'')+'> Available to order</label>'+
+ '<p style="margin-top:14px"><button class="btn" data-savep="'+(p.id||'')+'">'+(p.id?'Save changes':'Add item')+'</button> '+(p.id?'<button class="btn g" data-cancel="1">Cancel</button>':'')+' <span id="msg"></span></p></div>';
+ return f+D.products.map(function(x){return'<div class="box row"><div><b>'+esc(x.name)+'</b> <span class="pill">'+(x.category==='drink'?'pour':'shop')+'</span>'+(x.available?'':' <span class="pill">hidden</span>')+'<br><small>'+money(x.price)+' · '+esc(x.desc)+'</small></div><div><button class="btn g s" data-ep="'+x.id+'">Edit</button> <button class="btn d s" data-dp="'+x.id+'">Delete</button></div></div>'}).join('');
+}
+/* reviews */
+function vReviews(){
+ var r=edit&&edit.k==='r'?edit.v:{stars:5,visible:true};
+ return'<div class="box"><h2>'+(r.id?'Edit review':'Add review')+'</h2><p class="m">Only add real customer reviews.</p><div class="g2"><div><label>Customer name</label><input id="r_name" value="'+esc(r.name)+'"></div><div><label>Stars (1-5)</label><input id="r_st" type="number" min="1" max="5" value="'+esc(r.stars)+'"></div></div>'+
+ '<label>Review</label><textarea id="r_text" rows="3">'+esc(r.text)+'</textarea><label><input id="r_vis" type="checkbox" style="width:auto" '+(r.visible!==false?'checked':'')+'> Show on website</label>'+
+ '<p style="margin-top:14px"><button class="btn" data-saver="'+(r.id||'')+'">'+(r.id?'Save changes':'Add review')+'</button> '+(r.id?'<button class="btn g" data-cancel="1">Cancel</button>':'')+' <span id="msg"></span></p></div>'+
+ D.reviews.map(function(x){return'<div class="box row"><div><b>'+esc(x.name)+'</b> <span class="pill">'+x.stars+' stars</span>'+(x.visible?'':' <span class="pill">hidden</span>')+'<br><small>'+esc(x.text)+'</small></div><div><button class="btn g s" data-er="'+x.id+'">Edit</button> <button class="btn d s" data-dr="'+x.id+'">Delete</button></div></div>'}).join('');
+}
+/* settings */
+var SF=[['shopName','Shop name'],['logoText','Logo text'],['address','Address'],['phone','Phone'],['whatsapp','WhatsApp number (with country code, digits only)'],['instagram','Instagram link'],['tiktok','TikTok link'],['currency','Currency label']];
+function vSettings(){
+ var s=D.settings;return'<div class="box"><h2>Settings</h2><div class="g2">'+SF.map(function(f){return'<div><label>'+f[1]+'</label><input id="s_'+f[0]+'" value="'+esc(s[f[0]])+'"></div>'}).join('')+'</div>'+
+ '<label>Opening hours (one per line: Label | time)</label><textarea id="s_hours" rows="4">'+esc(s.hours)+'</textarea>'+
+ '<h2 style="margin-top:26px">Ordering and payment</h2>'+
+ '<label><input id="s_pk" type="checkbox" style="width:auto" '+(s.pickupEnabled!==false?'checked':'')+'> Allow pickup orders</label>'+
+ '<label><input id="s_dl" type="checkbox" style="width:auto" '+(s.deliveryEnabled?'checked':'')+'> Allow delivery orders</label>'+
+ '<div class="g2"><div><label>Delivery fee</label><input id="s_fee" type="number" min="0" value="'+esc(s.deliveryFee)+'"></div><div><label>Free delivery above (0 = never)</label><input id="s_free" type="number" min="0" value="'+esc(s.freeDeliveryOver)+'"></div>'+
+ '<div><label>Minimum order (0 = none)</label><input id="s_min" type="number" min="0" value="'+esc(s.minOrder)+'"></div><div><label>Delivery note shown to customers</label><input id="s_dnote" value="'+esc(s.deliveryNote)+'"></div></div>'+
+ '<label><input id="s_on" type="checkbox" style="width:auto" '+(s.onlineEnabled?'checked':'')+'> Allow "Pay online now" (customer sends money, then types the transaction ID)</label>'+
+ '<label>Payment instructions (your Easypaisa, JazzCash or bank details)</label><textarea id="s_pay" rows="3">'+esc(s.payInstructions)+'</textarea><p style="margin-top:14px"><button class="btn" data-sets="1">Save settings</button> <span id="msg"></span></p></div>'+
+ '<div class="box"><h2>Order alerts</h2><p class="m">Email alerts: <b>'+(D.alerts.email?'ON':'OFF')+'</b> &nbsp;·&nbsp; WhatsApp alerts: <b>'+(D.alerts.whatsapp?'ON':'OFF')+'</b></p><p class="m">They are switched on in your hosting settings (see the README). Press the button to send a test alert now.</p><p style="margin-top:12px"><button class="btn g" data-test="1">Send a test alert</button> <span id="tmsg" class="m"></span></p></div>';
+}
+function v(id){return $('#'+id).value}
+$('#main').onclick=function(e){
+ var a=function(k){return e.target.getAttribute(k)},id;
+ if(a('data-cancel')){edit=null;draw()}
+ else if((id=a('data-ep'))){edit={k:'p',v:D.products.filter(function(x){return x.id==id})[0]};draw();scrollTo(0,0)}
+ else if((id=a('data-er'))){edit={k:'r',v:D.reviews.filter(function(x){return x.id==id})[0]};draw();scrollTo(0,0)}
+ else if((id=a('data-dp'))){if(confirm('Delete this item?'))api('DELETE','/products/'+id).then(load).catch(fail)}
+ else if((id=a('data-dr'))){if(confirm('Delete this review?'))api('DELETE','/reviews/'+id).then(load).catch(fail)}
+ else if(a('data-savep')!==null){id=a('data-savep');var b={name:v('f_name'),price:v('f_price'),desc:v('f_desc'),tag:v('f_tag'),category:v('f_cat'),image:v('f_img'),available:$('#f_av').checked};
+  api(id?'PUT':'POST','/products'+(id?'/'+id:''),b).then(function(){edit=null;return load()}).then(function(){flash('Saved')}).catch(fail)}
+ else if(a('data-saver')!==null){id=a('data-saver');var r={name:v('r_name'),stars:v('r_st'),text:v('r_text'),visible:$('#r_vis').checked};
+  api(id?'PUT':'POST','/reviews'+(id?'/'+id:''),r).then(function(){edit=null;return load()}).catch(fail)}
+ else if(a('data-test')){var tm=$('#tmsg');tm.textContent='Sending...';api('POST','/test-notify').then(function(r){tm.textContent='Email: '+(r.email||'-')+'  |  WhatsApp: '+(r.whatsapp||'-')}).catch(function(x){tm.textContent=x.message})}
+ else if(a('data-sets')){var s={hours:v('s_hours'),pickupEnabled:$('#s_pk').checked,deliveryEnabled:$('#s_dl').checked,deliveryFee:v('s_fee'),freeDeliveryOver:v('s_free'),minOrder:v('s_min'),deliveryNote:v('s_dnote'),onlineEnabled:$('#s_on').checked,payInstructions:v('s_pay')};SF.forEach(function(f){s[f[0]]=v('s_'+f[0])});api('PUT','/settings',s).then(load).then(function(){flash('Saved')}).catch(fail)}
+};
+function shrink(file){return new Promise(function(ok,no){var im=new Image(),u=URL.createObjectURL(file);im.onload=function(){var m=1000,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){b?ok(b):no(new Error('Could not read this image'))},'image/jpeg',.85)};im.onerror=function(){no(new Error('Could not read this image'))};im.src=u})}
+function upload(file){$('#f_up').textContent='Uploading...';
+ return shrink(file).then(function(b){return fetch('/api/admin/upload',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'image/jpeg'},body:b})})
+ .then(function(r){if(r.status===401){showLogin();throw new Error('login')}return r.json().catch(function(){return{}}).then(function(j){if(!r.ok)throw new Error(j.error||'Upload failed');return j})})
+ .then(function(j){$('#f_img').value=j.url;$('#f_prev').src=j.url;$('#f_prev').style.display='block';$('#f_up').textContent='Photo uploaded. Now press the gold button to save.'})
+ .catch(function(e){$('#f_up').textContent='';fail(e)})}
+$('#main').onchange=function(e){
+ if(e.target.id==='x_from'||e.target.id==='x_to'){XF=$('#x_from').value;XT=$('#x_to').value;$('#x_dl').href='/api/admin/orders.csv?from='+XF+'&to='+XT;return}if(e.target.id==='f_file'&&e.target.files[0]){upload(e.target.files[0]);return}var ps=e.target.getAttribute('data-ps');if(ps){api('PATCH','/orders/'+ps,{payStatus:e.target.value}).then(load).catch(fail);return}var id=e.target.getAttribute('data-st');if(id)api('PATCH','/orders/'+id,{status:e.target.value}).then(load).catch(fail)};
+load().catch(function(){});
+setInterval(function(){if(!$('#app').hidden&&tab==='orders'&&!document.hidden&&!document.activeElement.matches('select'))load().catch(function(){})},20000);
+</script></body></html>

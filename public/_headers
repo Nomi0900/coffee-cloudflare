@@ -1,0 +1,6 @@
+/admin/*
+  X-Frame-Options: DENY
+  X-Robots-Tag: noindex
+  Cache-Control: no-store
+/*
+  X-Content-Type-Options: nosniff
