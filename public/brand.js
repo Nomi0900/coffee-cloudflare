@@ -13,8 +13,8 @@ window.BRAND = {
   city: 'Karachi',
   title: 'ONYX Coffee Bar — Specialty coffee in Karachi',      // browser tab + Google title
   description: 'ONYX Coffee Bar in Karachi: small-batch specialty coffee, poured by hand. Order for pickup or delivery.',
-  siteUrl: 'https://example.com',          // your real website address
-  ogImage: '',                             // link to a share image (shows when the link is sent on WhatsApp)
+  siteUrl: 'https://example.com',          // your REAL website address (needed for the share image below)
+  ogImage: '',                             // share image shown when the link is sent on WhatsApp, 1200x630. Put the file in public/images and write /images/share.jpg
 
   /* ---- 2. Colours ---- */
   colors: {

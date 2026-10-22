@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ONYX Coffee Bar — Specialty coffee in Karachi</title>
-<meta name="description" content="ONYX Coffee Bar in Karachi: small-batch specialty coffee, poured by hand. Order ahead for pickup.">
-<meta property="og:type" content="website"><meta property="og:title" content="ONYX Coffee Bar — Specialty coffee in Karachi"><meta property="og:description" content="Small-batch coffee, poured by hand. Order ahead and skip the line."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="">
+<meta name="description" content="ONYX Coffee Bar in Karachi: small-batch specialty coffee, poured by hand. Order for pickup or delivery.">
+<meta property="og:type" content="website"><meta property="og:title" content="ONYX Coffee Bar — Specialty coffee in Karachi"><meta property="og:description" content="ONYX Coffee Bar in Karachi: small-batch specialty coffee, poured by hand. Order for pickup or delivery."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="">
 <meta property="og:image" content=""><meta name="theme-color" content="#0A0806">
 <script type="application/ld+json" id="ld">{"@context":"https://schema.org","@type":"CafeOrCoffeeShop","name":"ONYX Coffee Bar","address":{"@type":"PostalAddress","streetAddress":"Add street address","addressLocality":"Karachi","addressCountry":"PK"},"telephone":"+92 300 0000000","openingHours":["Mo-Su 08:00-23:00"],"servesCuisine":"Coffee","url":"https://example.com","sameAs":["https://instagram.com/yourshop","https://tiktok.com/@yourshop"]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <script src="brand.js"></script>
 <link id="gf" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 <script>
@@ -48,7 +49,8 @@ nav{position:fixed;z-index:20;top:0;left:0;right:0;display:flex;justify-content:
 .txt p{color:#E0D5C4;font-size:clamp(15px,1.5vw,18px);max-width:460px;margin:22px auto 0;text-shadow:0 2px 20px rgba(0,0,0,.8)}
 .hud{position:absolute;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;align-items:flex-end;padding:0 clamp(16px,3vw,44px);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);pointer-events:none}
 .bar{width:90px;height:2px;background:var(--line);margin-top:10px;position:relative}.bar i{position:absolute;left:0;top:0;height:100%;width:0;background:var(--gold)}
-.hud .c{text-align:center}.hud .c:after{content:"";display:block;width:1px;height:34px;background:linear-gradient(var(--gold),transparent);margin:10px auto 0}
+.hud .c{text-align:center}
+.ap{position:absolute;right:clamp(16px,3vw,44px);bottom:0;pointer-events:auto;background:rgba(244,238,228,.08);border:1px solid var(--line);color:var(--foam);border-radius:999px;padding:9px 16px;font:inherit;font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}.ap:hover{background:rgba(244,238,228,.16)}.hud .c:after{content:"";display:block;width:1px;height:34px;background:linear-gradient(var(--gold),transparent);margin:10px auto 0}
 
 /* shop */
 section.p{padding:clamp(70px,9vw,130px) clamp(16px,3vw,44px)}
@@ -140,7 +142,7 @@ nav.solid{background:rgba(10,8,6,.86);-webkit-backdrop-filter:blur(14px);backdro
  <div id="layers"></div><canvas id="fx"></canvas><div class="vig"></div>
  <div class="bw" id="bw" aria-hidden="true"><b id="bwt"></b><small data-b="tagline">Specialty coffee bar</small></div>
  <div id="texts"></div>
- <div class="hud"><div class="l"><span id="ch">01 / 05</span><div class="bar"><i id="pb"></i></div></div><div class="c" data-b="scrollHint">Scroll the journey</div><div style="width:90px"></div></div>
+ <div class="hud"><div class="l"><span id="ch">01 / 05</span><div class="bar"><i id="pb"></i></div></div><div class="c" data-b="scrollHint">Scroll the journey</div><button class="ap" id="ap" type="button" aria-label="Play or pause the automatic scroll">Pause</button></div>
 </div></div>
 
 <div class="mq" aria-hidden="true"><div class="mt" id="mt"></div></div>
@@ -169,7 +171,7 @@ nav.solid{background:rgba(10,8,6,.86);-webkit-backdrop-filter:blur(14px);backdro
 </main>
 
 <div class="end"><h3 class="t sr" data-b="final.title">Your cup is <em>waiting.</em></h3><a class="gold sr" href="#best" data-b="final.button">Order now</a></div>
-<footer><div class="fg"><a class="logo" href="#"><i></i>ONYX</a><div class="fl"><a href="#journey" data-b="nav.journey">Journey</a><a href="#menu" data-b="nav.menu">Menu</a><a href="#shop" data-b="nav.shop">Shop</a><a href="#visit" data-b="nav.visit">Visit</a><a id="ig" href="https://instagram.com/yourshop" rel="noopener">Instagram</a><a id="tk" href="https://tiktok.com/@yourshop" rel="noopener">TikTok</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div><span data-b="footer">© 2026</span></div></footer>
+<footer><div class="fg"><a class="logo" href="#"><i></i>ONYX</a><div class="fl"><a href="#journey" data-b="nav.journey">Journey</a><a href="#menu" data-b="nav.menu">Menu</a><a href="#shop" data-b="nav.shop">Shop</a><a href="#visit" data-b="nav.visit">Visit</a><a id="ig" href="https://instagram.com/yourshop" rel="noopener">Instagram</a><a id="tk" href="https://tiktok.com/@yourshop" rel="noopener">TikTok</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div><span data-b="footer">© 2026</span></div></footer>
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Product photo"><button class="lbx" id="lbx" aria-label="Close">&times;</button><button class="lbn lbp" id="lbp" aria-label="Previous photo">&#8249;</button><div class="lbc"><img id="lbi" alt="" draggable="false"><div class="lbt"><b id="lbn"></b><span id="lbd"></span><div class="lbr"><b id="lbpr"></b><button class="gold sm" id="lba">Add</button></div></div></div><button class="lbn lbnx" id="lbnx" aria-label="Next photo">&#8250;</button></div>
 <button class="gold cartbtn" id="cartBtn" hidden>Your order (<span id="cn">0</span>)</button>
@@ -227,10 +229,26 @@ var SCENES=(window.BRAND&&BRAND.scenes)||[];
  window.setBW=function(txt){bwt.textContent='';String(txt).split('').forEach(function(c,j){var e=document.createElement('i');e.style.setProperty('--j',j);e.textContent=c;bwt.appendChild(e)})};
  setBW((window.BRAND&&BRAND.logoText)||'');
  var cur=0,t0=performance.now();
- var auto=!reduce&&scrollY<50,a0=0;
- ['wheel','touchstart','keydown','mousedown'].forEach(function(ev){addEventListener(ev,function(){auto=false},{passive:true})});
+ var auto=!reduce&&scrollY<50,hold=0,ay=0,lastT=0,apb=document.getElementById('ap');
+ function apLabel(){if(apb)apb.textContent=auto?'Pause':'Play'}
+ function stopAuto(){if(auto){auto=false;document.documentElement.style.scrollBehavior='';apLabel()}}
+ apLabel();
+ ['wheel','touchmove'].forEach(function(ev){addEventListener(ev,stopAuto,{passive:true})});
+ addEventListener('keydown',function(e){if([' ','ArrowDown','ArrowUp','PageDown','PageUp','Home','End'].indexOf(e.key)>-1)stopAuto()});
+ if(apb)apb.addEventListener('click',function(){
+  if(auto){stopAuto();return}
+  if(scrollY>=J.offsetHeight-innerHeight-8)scrollTo({top:0,behavior:'instant'});
+  hold=1;lastT=0;auto=true;apLabel()});
  function frame(now){
-  if(auto){if(!a0)a0=now+2600;if(now>a0){var tot0=J.offsetHeight-innerHeight,y=Math.min(tot0,(now-a0)/24000*tot0);scrollTo({top:y,behavior:'instant'});if(y>=tot0)auto=false}}
+  if(auto){
+   if(!hold)hold=now+2200;                                   /* wait for the opening word to appear */
+   if(now>=hold){
+    if(!lastT)ay=scrollY;
+    if(lastT&&Math.abs(scrollY-ay)>3)stopAuto();            /* the visitor scrolled by hand (scrollbar, trackpad, anything) */
+    else{var tot=J.offsetHeight-innerHeight,dt=lastT?Math.min(50,now-lastT):0;ay=Math.min(tot,ay+tot/24000*dt);
+     document.documentElement.style.scrollBehavior='auto';scrollTo(0,ay);if(ay>=tot)stopAuto()}
+    lastT=now}
+  }
   var r=J.getBoundingClientRect(),tot=r.height-innerHeight,pr=Math.max(0,Math.min(1,-r.top/tot)),f=pr*N,t=reduce?0:(now-t0)/1000;
   for(var i=0;i<N;i++){var d=f-(i+.5),a=Math.abs(d);
    L[i].style.opacity=Math.max(0,Math.min(1,1-(a-.35)/.3));
