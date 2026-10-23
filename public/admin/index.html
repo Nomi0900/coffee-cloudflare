@@ -45,9 +45,10 @@ function draw(){
 }
 function money(n){return esc(D.settings.currency)+' '+Number(n).toLocaleString('en-US')}
 /* orders */
+function sndBar(){return'<p class="m" style="margin-bottom:14px">Sound and pop-up when a new order arrives (while this page is open): <button class="btn g s" data-snd="1">'+(SND?'Turn off':'Turn on')+'</button></p>'}
 function vOrders(){
- if(!D.orders.length)return'<h2>Orders</h2><p class="m">No orders yet. New orders appear here automatically.</p>';
- var ex='<div class="box"><b>Download orders as a spreadsheet</b><p class="m">Opens in Excel or Google Sheets. Leave the dates empty to get all orders.</p><div class="g2"><div><label>From</label><input id="x_from" type="date" value="'+XF+'"></div><div><label>To</label><input id="x_to" type="date" value="'+XT+'"></div></div><p style="margin-top:12px"><a class="btn" id="x_dl" href="/api/admin/orders.csv?from='+XF+'&to='+XT+'">Download spreadsheet</a></p></div>';
+ if(!D.orders.length)return'<h2>Orders</h2>'+sndBar()+'<p class="m">No orders yet. New orders appear here automatically.</p>';
+  var ex=sndBar()+'<div class="box"><b>Download orders as a spreadsheet</b><p class="m">Opens in Excel or Google Sheets. Leave the dates empty to get all orders.</p><div class="g2"><div><label>From</label><input id="x_from" type="date" value="'+XF+'"></div><div><label>To</label><input id="x_to" type="date" value="'+XT+'"></div></div><p style="margin-top:12px"><a class="btn" id="x_dl" href="/api/admin/orders.csv?from='+XF+'&to='+XT+'">Download spreadsheet</a></p></div>';
  return'<h2>Orders</h2>'+ex+D.orders.map(function(o){
   return'<div class="box"><div class="row"><b>#'+o.id+' · '+esc(o.name)+'</b><span><span class="pill">'+(o.type==='delivery'?'delivery':'pickup')+'</span> <span class="pill '+(o.status==='new'?'new':'')+'">'+o.status+'</span></span></div>'+
   '<small>'+new Date(o.createdAt).toLocaleString()+' · <a style="color:var(--gold)" href="tel:'+esc(o.phone)+'">'+esc(o.phone)+'</a></small>'+
@@ -91,7 +92,7 @@ function vSettings(){
  '<h2 style="margin-top:26px">Website images</h2><p class="m">Choose a photo, wait for "Uploaded", then press Save settings.</p><div class="g2">'+
  '<div><label>Our story photo (portrait 4:5, about 800 x 1000)</label><input id="s_storyImage" placeholder="no photo yet" value="'+esc(s.storyImage)+'"><input id="u_story" type="file" accept="image/*" style="margin-top:8px"><small class="m" id="us_story"></small></div>'+
  '<div><label>Share image for WhatsApp and Google (1200 x 630)</label><p class="m">Set ogImage and siteUrl in public/brand.js, for example /images/share.jpg, and upload the file to public/images on GitHub.</p></div></div><p style="margin-top:14px"><button class="btn" data-sets="1">Save settings</button> <span id="msg"></span></p></div>'+
- '<div class="box"><h2>Order alerts</h2><p class="m">Email alerts: <b>'+(D.alerts.email?'ON':'OFF')+'</b> &nbsp;·&nbsp; WhatsApp alerts: <b>'+(D.alerts.whatsapp?'ON':'OFF')+'</b></p><p class="m">They are switched on in your hosting settings (see the README). Press the button to send a test alert now.</p><p style="margin-top:12px"><button class="btn g" data-test="1">Send a test alert</button> <span id="tmsg" class="m"></span></p></div>';
+ '<div class="box"><h2>Order alerts</h2><p class="m">Phone push: <b>'+(D.alerts.push?'ON':'OFF')+'</b> &nbsp;·&nbsp; Telegram: <b>'+(D.alerts.telegram?'ON':'OFF')+'</b> &nbsp;·&nbsp; WhatsApp: <b>'+(D.alerts.whatsapp?'ON':'OFF')+'</b> &nbsp;·&nbsp; Email: <b>'+(D.alerts.email?'ON':'OFF')+'</b></p><p class="m">They are switched on in your hosting settings (see the README). Press the button to send a test alert now.</p><p style="margin-top:12px"><button class="btn g" data-test="1">Send a test alert</button> <span id="tmsg" class="m"></span></p></div>';
 }
 function v(id){return $('#'+id).value}
 $('#main').onclick=function(e){
@@ -105,7 +106,8 @@ $('#main').onclick=function(e){
   api(id?'PUT':'POST','/products'+(id?'/'+id:''),b).then(function(){edit=null;return load()}).then(function(){flash('Saved')}).catch(fail)}
  else if(a('data-saver')!==null){id=a('data-saver');var r={name:v('r_name'),stars:v('r_st'),text:v('r_text'),visible:$('#r_vis').checked};
   api(id?'PUT':'POST','/reviews'+(id?'/'+id:''),r).then(function(){edit=null;return load()}).catch(fail)}
- else if(a('data-test')){var tm=$('#tmsg');tm.textContent='Sending...';api('POST','/test-notify').then(function(r){tm.textContent='Email: '+(r.email||'-')+'  |  WhatsApp: '+(r.whatsapp||'-')}).catch(function(x){tm.textContent=x.message})}
+ else if(a('data-snd')){SND=!SND;localStorage.setItem('snd',SND?'1':'0');if(SND){beep();try{if(window.Notification&&Notification.permission==='default')Notification.requestPermission()}catch(x){}}draw()}
+ else if(a('data-test')){var tm=$('#tmsg');tm.textContent='Sending...';api('POST','/test-notify').then(function(r){tm.textContent='Push: '+(r.push||'-')+'  |  Telegram: '+(r.telegram||'-')+'  |  WhatsApp: '+(r.whatsapp||'-')+'  |  Email: '+(r.email||'-')}).catch(function(x){tm.textContent=x.message})}
  else if(a('data-sets')){var s={hours:v('s_hours'),pickupEnabled:$('#s_pk').checked,deliveryEnabled:$('#s_dl').checked,deliveryFee:v('s_fee'),freeDeliveryOver:v('s_free'),minOrder:v('s_min'),deliveryNote:v('s_dnote'),onlineEnabled:$('#s_on').checked,payInstructions:v('s_pay'),storyImage:v('s_storyImage')};SF.forEach(function(f){s[f[0]]=v('s_'+f[0])});api('PUT','/settings',s).then(load).then(function(){flash('Saved')}).catch(fail)}
 };
 function shrink(file,mx){return new Promise(function(ok,no){var im=new Image(),u=URL.createObjectURL(file);im.onload=function(){var m=mx||1000,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(b){b?ok(b):no(new Error('Could not read this image'))},'image/jpeg',.85)};im.onerror=function(){no(new Error('Could not read this image'))};im.src=u})}
@@ -121,5 +123,12 @@ function upload(file){$('#f_up').textContent='Uploading...';
 $('#main').onchange=function(e){
  if(e.target.id==='x_from'||e.target.id==='x_to'){XF=$('#x_from').value;XT=$('#x_to').value;$('#x_dl').href='/api/admin/orders.csv?from='+XF+'&to='+XT;return}if(e.target.id==='f_file'&&e.target.files[0]){upload(e.target.files[0]);return}if(e.target.id==='u_story'&&e.target.files[0]){uploadTo(e.target.files[0],1200,'s_storyImage','us_story');return}if(e.target.id==='u_og'&&e.target.files[0]){uploadTo(e.target.files[0],1200,'s_ogImage','us_og');return}var ps=e.target.getAttribute('data-ps');if(ps){api('PATCH','/orders/'+ps,{payStatus:e.target.value}).then(load).catch(fail);return}var id=e.target.getAttribute('data-st');if(id)api('PATCH','/orders/'+id,{status:e.target.value}).then(load).catch(fail)};
 load().catch(function(){});
-setInterval(function(){if(!$('#app').hidden&&tab==='orders'&&!document.hidden&&!document.activeElement.matches('select'))load().catch(function(){})},20000);
+/* new-order watcher: checks every 30 seconds while this page is open, on any tab */
+var lastId=null,SND=localStorage.getItem('snd')==='1',baseTitle=document.title;
+function beep(){try{var c=new (window.AudioContext||window.webkitAudioContext)();[0,.35].forEach(function(t){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.25,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.3);o.start(c.currentTime+t);o.stop(c.currentTime+t+.3)})}catch(e){}}
+function alertNew(r){document.title='NEW ORDER #'+r.latest.id+' - '+baseTitle;if(SND){beep();try{if(window.Notification&&Notification.permission==='granted')new Notification('New order #'+r.latest.id,{body:r.latest.name+' - '+D.settings.currency+' '+r.latest.total})}catch(e){}}}
+addEventListener('focus',function(){document.title=baseTitle});
+setInterval(function(){if($('#app').hidden||!D)return;
+ if(lastId===null){lastId=D.orders.length?D.orders[0].id:0}
+ api('GET','/orders-new?since='+lastId).then(function(r){if(r.count>0){lastId=r.max;alertNew(r);if(tab==='orders'&&!(document.activeElement&&document.activeElement.matches&&document.activeElement.matches('select')))load().catch(function(){});else load().catch(function(){})}}).catch(function(){})},30000);
 </script></body></html>

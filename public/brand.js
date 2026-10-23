@@ -58,7 +58,14 @@ window.BRAND = {
   menu: { title: 'Signature <em>pours</em>', sub: 'Six drinks we are known for, made to order at the bar.' },
   shop: {
     title: 'Shop by <em>category</em>', sub: 'Beans, blends and brewing gear, roasted and packed in small batches.',
-    tiles: ['Whole beans', 'Espresso', 'Cold brew', 'Brewing gear'],
+    /* Four tiles. label = text. filter = the Filter group (set in the admin panel) the tile opens.
+       icon = beans, glass, dripper or box (a drawing). image = optional photo, for example /images/cat-beans.jpg (replaces the drawing). */
+    tiles: [
+      { label: 'Whole beans', filter: 'Beans', icon: 'beans', image: '' },
+      { label: 'Cold brew', filter: 'Bottled', icon: 'glass', image: '' },
+      { label: 'Brewing gear', filter: 'Gear', icon: 'dripper', image: '' },
+      { label: 'Subscriptions', filter: 'Plans', icon: 'box', image: '' }
+    ],
     bestTitle: 'Best <em>sellers</em>', bestSub: 'The bags and cups our regulars reorder every week.'
   },
   story: {
