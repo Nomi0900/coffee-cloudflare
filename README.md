@@ -16,3 +16,24 @@ Cloudflare Pages settings:
 - Optional:         SHOP_TZ (default Asia/Karachi)
 
 Re-brand a new client: edit public/brand.js and replace public/videos. Menu, prices, hours, delivery and payment are changed in the admin panel (/admin).
+
+## Order alerts (set these in Cloudflare: your project > Settings > Variables and Secrets)
+Add only the ones you want. Use type "Secret". Then press "Deploy" so they take effect, and test with Admin > Settings > "Send a test alert".
+
+Phone push (easiest, free, no account): install the "ntfy" app, subscribe to a long random topic name, then add
+- NTFY_TOPIC      the same topic name, e.g. onyx-orders-k8x2q9m4v7   (the topic name is the password, keep it private)
+
+Telegram (reliable, free): create a bot with @BotFather, send it a message, then add
+- TELEGRAM_BOT_TOKEN   the token BotFather gives you
+- TELEGRAM_CHAT_ID     your chat id (see the guide)
+
+WhatsApp (free CallMeBot, sends to your own number; can be slow or stop working):
+- WHATSAPP_PHONE       923001234567
+- CALLMEBOT_KEY        key from callmebot.com
+
+Email (Resend):
+- NOTIFY_EMAIL         where alerts go
+- RESEND_API_KEY       from resend.com
+- EMAIL_FROM           optional. Without it, Resend's test sender is used (it only delivers to your own Resend account email)
+
+Also: while the admin page is open, press "Turn on" in Orders for a sound and pop-up on that device. The page checks every 30 seconds.
