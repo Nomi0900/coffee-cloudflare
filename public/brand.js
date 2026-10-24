@@ -37,17 +37,18 @@ window.BRAND = {
   /* ---- 4. Menu bar and small labels ---- */
   nav: { journey: 'Journey', menu: 'Menu', shop: 'Shop', visit: 'Visit', order: 'Order now' },
   scrollHint: 'Scroll the journey',
+  whatsappText: 'Hi! I would like to place an order.',   // message that opens in WhatsApp when someone taps the green button
 
   /* ---- 5. The scrolling video journey ----
-     src    = video file (put it in the videos folder). Leave '' to show an animated placeholder.
+     src    = video file (put it in the videos folder). srcM = a smaller copy used on phones (optional, makes phones smoother). Leave '' to show an animated placeholder.
      still  = a picture instead of a video (used for the last scene)
      poster = picture shown while the video loads
      c      = two background colours behind the scene
      btn    = 1 puts the "Order now" button on that scene
      Add or remove scenes freely (2 to 6 scenes work well). */
   scenes: [
-    { src: 'videos/scene1.mp4', poster: 'videos/scene1.jpg', k: 'Chapter 01', h: 'Every cup begins with a bean.', p: 'Single-origin, roasted in small batches every week.', c: ['#0c1a19', '#050b0a'] },
-    { src: 'videos/scene2.mp4', poster: 'videos/scene2.jpg', k: 'Chapter 02', h: 'Poured with patience.', p: 'Slow, steady and fresh, right to the last drop.', c: ['#0c1a19', '#050b0a'] },
+    { src: 'videos/scene1.mp4', srcM: 'videos/scene1-m.mp4', poster: 'videos/scene1.jpg', k: 'Chapter 01', h: 'Every cup begins with a bean.', p: 'Single-origin, roasted in small batches every week.', c: ['#0c1a19', '#050b0a'] },
+    { src: 'videos/scene2.mp4', srcM: 'videos/scene2-m.mp4', poster: 'videos/scene2.jpg', k: 'Chapter 02', h: 'Poured with patience.', p: 'Slow, steady and fresh, right to the last drop.', c: ['#0c1a19', '#050b0a'] },
     { src: '', still: 'videos/scene3.jpg', btn: 1, k: 'Chapter 03', h: 'Taste the difference.', p: 'Order online for pickup or delivery.', c: ['#0c1a19', '#050b0a'] }
   ],
 
