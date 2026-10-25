@@ -37,3 +37,9 @@ Email (Resend):
 - EMAIL_FROM           optional. Without it, Resend's test sender is used (it only delivers to your own Resend account email)
 
 Also: while the admin page is open, press "Turn on" in Orders for a sound and pop-up on that device. The page checks every 30 seconds.
+
+Discord (free, works well from Cloudflare): in a Discord server open Channel settings > Integrations > Webhooks > New webhook > Copy URL, then add
+- DISCORD_WEBHOOK_URL   the webhook URL
+Slack: create an "Incoming Webhook" in your Slack workspace, then add
+- SLACK_WEBHOOK_URL     the webhook URL
+Note: the free ntfy.sh server can be unreachable from Cloudflare (error 522). If that happens, use Telegram or Discord.
