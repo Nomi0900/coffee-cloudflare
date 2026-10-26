@@ -75,7 +75,7 @@ window.BRAND = {
     p2: 'Every pour is weighed and timed, and every order is made fresh at the bar.',
     stats: [['Every Monday', 'Fresh roast day'], ['3 farms', 'Direct partners'], ['Till midnight', 'Open late']]
   },
-  reviews: { title: 'What guests <em>say</em>', sub: '' },
+  reviews: { title: 'What guests <em>say</em>', sub: '', cta: 'Write a review', empty: 'Be the first to review us.' },
   visit: { title: 'Visit <em>us</em>', directions: 'Get directions', whatsapp: 'Order on WhatsApp' },
   final: { title: 'Your cup is <em>waiting.</em>', button: 'Order now' },
   footer: '© 2026 ONYX Coffee Bar',

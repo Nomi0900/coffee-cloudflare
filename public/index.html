@@ -143,6 +143,9 @@ nav.solid{background:rgba(10,8,6,.86);-webkit-backdrop-filter:blur(14px);backdro
 .lw{display:inline-block;white-space:nowrap}.lg{display:inline-block;width:.72em;height:.72em;vertical-align:-.02em;margin-right:.2em}
 .bw .lg{width:.74em;height:.74em;margin:0 .02em 0 0}.bw i.lo{letter-spacing:0}
 .wafab{position:fixed;z-index:29;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;background:#25D366;display:grid;place-items:center;box-shadow:0 10px 30px -8px rgba(0,0,0,.7);transition:transform .3s var(--ease)}.wafab:hover{transform:scale(1.07)}.wafab svg{width:30px;height:30px;fill:#fff}.wafab[hidden]{display:none}
+.rvh{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px}.rvh .t{margin:0}
+.stars{display:flex;gap:4px;margin:6px 0 2px}.stars .st{background:none;border:0;font-size:36px;line-height:1;color:#4a3f33;cursor:pointer;padding:2px 4px}.stars .st.on{color:var(--gold)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 </style>
 </head>
 <body>
@@ -171,7 +174,7 @@ nav.solid{background:rgba(10,8,6,.86);-webkit-backdrop-filter:blur(14px);backdro
  <div class="stats sr" id="stats"></div></div>
  <div class="ph sr" data-img="" role="img" aria-label="Photo of the coffee bar"></div></div></section>
 
-<section class="p" id="reviews" style="padding-top:0" hidden><div class="w"><h3 class="t sr" data-b="reviews.title">What guests <em>say</em></h3><div class="rev" id="revs"></div></div></section>
+<section class="p" id="reviews" style="padding-top:0"><div class="w"><div class="rvh"><h3 class="t sr" data-b="reviews.title">What guests <em>say</em></h3><button class="gold sm" id="rvOpen" type="button" data-b="reviews.cta">Write a review</button></div><p class="sub" id="rvEmpty" data-b="reviews.empty" hidden>Be the first to review us.</p><div class="rev" id="revs"></div></div></section>
 
 <section class="p" id="visit" style="padding-top:0"><div class="w two">
  <div><h3 class="t sr" data-b="visit.title">Visit <em>us</em></h3><p class="sub sr" id="addr">Add your street address, Karachi<br>+92 300 0000000</p>
@@ -185,6 +188,10 @@ nav.solid{background:rgba(10,8,6,.86);-webkit-backdrop-filter:blur(14px);backdro
 
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Product photo"><button class="lbx" id="lbx" aria-label="Close">&times;</button><button class="lbn lbp" id="lbp" aria-label="Previous photo">&#8249;</button><div class="lbc"><img id="lbi" alt="" draggable="false"><div class="lbt"><b id="lbn"></b><span id="lbd"></span><div class="lbr"><b id="lbpr"></b><button class="gold sm" id="lba">Add</button></div></div></div><button class="lbn lbnx" id="lbnx" aria-label="Next photo">&#8250;</button></div>
 <a class="wafab" id="wafab" href="#" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
+<div class="ov" id="rvm" hidden><div class="sheet" role="dialog" aria-modal="true" aria-label="Write a review"><h4>Write a review</h4>
+<div id="rvF"><div class="stars" id="rvS" role="group" aria-label="Your rating"><button type="button" class="st" data-v="1" aria-label="1 star">&#9733;</button><button type="button" class="st" data-v="2" aria-label="2 stars">&#9733;</button><button type="button" class="st" data-v="3" aria-label="3 stars">&#9733;</button><button type="button" class="st" data-v="4" aria-label="4 stars">&#9733;</button><button type="button" class="st" data-v="5" aria-label="5 stars">&#9733;</button></div>
+<input id="rvName" placeholder="Your name" maxlength="60" autocomplete="name"><textarea id="rvText" rows="4" maxlength="300" placeholder="Tell us about your visit or your order (10 to 300 characters)"></textarea><input id="rvHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+<div class="er" id="rvErr"></div><p><button class="gold" id="rvGo">Send review</button><button class="x" id="rvX">Close</button></p></div><div id="rvOK" hidden></div></div></div>
 <button class="gold cartbtn" id="cartBtn" hidden>Your order (<span id="cn">0</span>)</button>
 <div class="ov" id="ov" hidden><div class="sheet" role="dialog" aria-modal="true" aria-label="Your order"><h4 id="cT">Your order</h4><div id="cL"></div>
 <div id="cF">
@@ -311,7 +318,7 @@ var evq=[];function ev(n,d,o){if(window.fbq){o?fbq('track',n,d,o):fbq('track',n,
   d.products.forEach(function(p){P[p.id]=p});
   ALL=d.products;mountFilters();renderCats();
   Q('#revs').innerHTML=d.reviews.map(function(r){return'<figure class="q sr in"><div class="s" aria-label="'+r.stars+' stars">'+new Array(r.stars+1).join('\u2605')+'</div><p>'+esc(r.text)+'</p><small>'+esc(r.name)+'</small></figure>'}).join('');
-  Q('#reviews').hidden=!d.reviews.length;
+  Q('#rvEmpty').hidden=!!d.reviews.length;
   Q('#addr').innerHTML=esc(S.address)+'<br>'+esc(S.phone);
   Q('#hours').innerHTML=String(S.hours||'').split('\n').filter(Boolean).map(function(l){var a=l.split('|');return'<tr><td>'+esc(a[0])+'</td><td>'+esc(a[1]||'')+'</td></tr>'}).join('');
   if(WA)Q('#wa').href='https://wa.me/'+WA;
@@ -400,9 +407,22 @@ var ICONS={
   else if(t.classList&&t.classList.contains('chip')){var fb=t.closest('.fb'),fid=fb.getAttribute('data-g');FS[fid].g=t.getAttribute('data-grp');[].forEach.call(fb.querySelectorAll('.chip'),function(c){c.classList.toggle('on',c===t)});renderGrid(fid)}
   else if(t.closest&&t.closest('#wafab'))ev('Contact',{content_name:'WhatsApp'})
   else if(t.closest&&t.closest('.art[data-pid]'))lbOpen(t.closest('.art[data-pid]').getAttribute('data-pid'))});
+ /* ----- customer reviews ----- */
+ var rate=0;
+ function paintStars(n){[].forEach.call(document.querySelectorAll('#rvS .st'),function(b){b.classList.toggle('on',+b.getAttribute('data-v')<=n)})}
+ Q('#rvOpen').onclick=function(){rate=0;paintStars(0);Q('#rvName').value='';Q('#rvText').value='';Q('#rvHp').value='';Q('#rvErr').textContent='';Q('#rvF').hidden=false;Q('#rvOK').hidden=true;Q('#rvm').hidden=false;setTimeout(function(){Q('#rvName').focus()},50)};
+ Q('#rvX').onclick=function(){Q('#rvm').hidden=true};
+ Q('#rvm').addEventListener('click',function(e){var t=e.target;if(t.id==='rvm'||t.id==='rvX2')Q('#rvm').hidden=true;if(t.classList&&t.classList.contains('st')){rate=+t.getAttribute('data-v');paintStars(rate)}});
+ Q('#rvGo').onclick=function(){var b=Q('#rvGo'),er=Q('#rvErr');er.textContent='';
+  if(!rate){er.textContent='Please choose a star rating';return}
+  b.disabled=true;
+  fetch('/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:Q('#rvName').value,text:Q('#rvText').value,stars:rate,website:Q('#rvHp').value})})
+  .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.error||'Could not send your review');return j})})
+  .then(function(){Q('#rvF').hidden=true;Q('#rvOK').hidden=false;Q('#rvOK').innerHTML='<p style="color:#D6CBBE">Thank you for your review. It will appear on the website after we check it.</p><p style="margin-top:18px"><button class="x" id="rvX2" style="margin-left:0">Close</button></p>'})
+  .catch(function(x){er.textContent=(x instanceof TypeError)?'Reviews are not available right now. Please try again later.':x.message}).then(function(){b.disabled=false})};
  document.addEventListener('change',function(e){var n=e.target.name;if(n==='ot'||n==='pm')form()});
  document.addEventListener('keydown',function(e){var open=!Q('#lb').hidden;
-  if(e.key==='Escape'){if(open)lbClose();else Q('#ov').hidden=true}
+  if(e.key==='Escape'){if(open)lbClose();else{Q('#ov').hidden=true;Q('#rvm').hidden=true}}
   else if(open&&e.key==='ArrowLeft')lbMove(-1);else if(open&&e.key==='ArrowRight')lbMove(1);
   else if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('art')&&e.target.hasAttribute('data-pid')){e.preventDefault();lbOpen(e.target.getAttribute('data-pid'))}});
  Q('#cGo').onclick=function(){var b=Q('#cGo'),er=Q('#cErr');er.textContent='';b.disabled=true;

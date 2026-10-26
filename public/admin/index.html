@@ -21,7 +21,7 @@ small,.m{color:var(--mute)}.tot{font-weight:700;color:var(--gold)}ul.it{margin:8
 </style></head><body>
 <div id="login" hidden><h2>Admin login</h2><label>Password</label><input id="pw" type="password" autocomplete="current-password"><p style="margin-top:14px"><button class="btn" id="go">Log in</button></p><p id="err"></p></div>
 <div id="app" hidden>
- <div class="top"><div class="tabs" id="tabs"><button data-t="orders">Orders <span id="nb"></span></button><button data-t="menu">Menu</button><button data-t="reviews">Reviews</button><button data-t="settings">Settings</button></div><button class="btn g s" id="out">Log out</button></div>
+ <div class="top"><div class="tabs" id="tabs"><button data-t="orders">Orders <span id="nb"></span></button><button data-t="menu">Menu</button><button data-t="reviews">Reviews <span id="rb"></span></button><button data-t="settings">Settings</button></div><button class="btn g s" id="out">Log out</button></div>
  <main id="main"></main>
 </div>
 <script>
@@ -40,7 +40,7 @@ $('#out').onclick=function(){api('POST','/logout').then(showLogin)};
 $('#tabs').onclick=function(e){var t=e.target.getAttribute('data-t');if(t){tab=t;edit=null;draw()}};
 function draw(){
  [].forEach.call(document.querySelectorAll('#tabs button'),function(b){b.className=b.getAttribute('data-t')===tab?'on':''});
- var n=D.orders.filter(function(o){return o.status==='new'}).length;$('#nb').textContent=n?'('+n+')':'';
+ var n=D.orders.filter(function(o){return o.status==='new'}).length;$('#nb').textContent=n?'('+n+')':'';var pr=D.reviews.filter(function(x){return x.status==='pending'}).length;$('#rb').textContent=pr?'('+pr+')':'';
  $('#main').innerHTML=({orders:vOrders,menu:vMenu,reviews:vReviews,settings:vSettings})[tab]();
 }
 function money(n){return esc(D.settings.currency)+' '+Number(n).toLocaleString('en-US')}
@@ -72,10 +72,10 @@ function vMenu(){
 /* reviews */
 function vReviews(){
  var r=edit&&edit.k==='r'?edit.v:{stars:5,visible:true};
- return'<div class="box"><h2>'+(r.id?'Edit review':'Add review')+'</h2><p class="m">Only add real customer reviews.</p><div class="g2"><div><label>Customer name</label><input id="r_name" value="'+esc(r.name)+'"></div><div><label>Stars (1-5)</label><input id="r_st" type="number" min="1" max="5" value="'+esc(r.stars)+'"></div></div>'+
+ return'<div class="box"><h2>'+(r.id?'Edit review':'Add review')+'</h2><p class="m">Customers can also write reviews on the website. Their reviews wait here until you press Approve. Only add real customer reviews yourself.</p><div class="g2"><div><label>Customer name</label><input id="r_name" value="'+esc(r.name)+'"></div><div><label>Stars (1-5)</label><input id="r_st" type="number" min="1" max="5" value="'+esc(r.stars)+'"></div></div>'+
  '<label>Review</label><textarea id="r_text" rows="3">'+esc(r.text)+'</textarea><label><input id="r_vis" type="checkbox" style="width:auto" '+(r.visible!==false?'checked':'')+'> Show on website</label>'+
  '<p style="margin-top:14px"><button class="btn" data-saver="'+(r.id||'')+'">'+(r.id?'Save changes':'Add review')+'</button> '+(r.id?'<button class="btn g" data-cancel="1">Cancel</button>':'')+' <span id="msg"></span></p></div>'+
- D.reviews.map(function(x){return'<div class="box row"><div><b>'+esc(x.name)+'</b> <span class="pill">'+x.stars+' stars</span>'+(x.visible?'':' <span class="pill">hidden</span>')+'<br><small>'+esc(x.text)+'</small></div><div><button class="btn g s" data-er="'+x.id+'">Edit</button> <button class="btn d s" data-dr="'+x.id+'">Delete</button></div></div>'}).join('');
+ D.reviews.slice().sort(function(a,b){return (b.status==='pending')-(a.status==='pending')||b.id-a.id}).map(function(x){var pd=x.status==='pending';return'<div class="box row"><div><b>'+esc(x.name)+'</b> <span class="pill">'+x.stars+' stars</span>'+(pd?' <span class="pill new">waiting for approval</span>':(x.visible?'':' <span class="pill">hidden</span>'))+'<br><small>'+esc(x.text)+'</small></div><div>'+(pd?'<button class="btn s" data-ap="'+x.id+'">Approve</button> ':'')+'<button class="btn g s" data-er="'+x.id+'">Edit</button> <button class="btn d s" data-dr="'+x.id+'">Delete</button></div></div>'}).join('');
 }
 /* settings */
 var SF=[['shopName','Shop name'],['logoText','Logo text'],['address','Address'],['phone','Phone'],['whatsapp','WhatsApp number (with country code, digits only)'],['instagram','Instagram link'],['tiktok','TikTok link'],['currency','Currency label (shown on the site, e.g. Rs)'],['currencyCode','Currency code for Meta (PKR)'],['metaPixelId','Meta Pixel ID (numbers only)']];
@@ -101,6 +101,7 @@ $('#main').onclick=function(e){
  else if((id=a('data-ep'))){edit={k:'p',v:D.products.filter(function(x){return x.id==id})[0]};draw();scrollTo(0,0)}
  else if((id=a('data-er'))){edit={k:'r',v:D.reviews.filter(function(x){return x.id==id})[0]};draw();scrollTo(0,0)}
  else if((id=a('data-dp'))){if(confirm('Delete this item?'))api('DELETE','/products/'+id).then(load).catch(fail)}
+ else if((id=a('data-ap'))){api('PATCH','/reviews/'+id,{}).then(load).catch(fail)}
  else if((id=a('data-dr'))){if(confirm('Delete this review?'))api('DELETE','/reviews/'+id).then(load).catch(fail)}
  else if(a('data-savep')!==null){id=a('data-savep');var b={name:v('f_name'),price:v('f_price'),desc:v('f_desc'),tag:v('f_tag'),grp:v('f_grp'),category:v('f_cat'),image:v('f_img'),available:$('#f_av').checked};
   api(id?'PUT':'POST','/products'+(id?'/'+id:''),b).then(function(){edit=null;return load()}).then(function(){flash('Saved')}).catch(fail)}
